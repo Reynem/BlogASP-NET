@@ -1,0 +1,77 @@
+﻿@page "/register"
+@inject UserManager<IdentityUser> UserManager
+@using Blog.Models
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Identity
+@using System.ComponentModel.DataAnnotations
+
+<h4>Register a new user</h4>
+<hr />
+<p>@statusMessage</p>
+
+<EditForm Model="@registerModel" OnValidSubmit="@HandleRegister">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="userName">User name</label>
+        <InputText id="userName" class="form-control" @bind-Value="registerModel.UserName" />
+        <ValidationMessage For="@(() => registerModel.UserName)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="password">Password</label>
+        <InputText id="password" class="form-control" @bind-Value="registerModel.Password" type="password" />
+        <ValidationMessage For="@(() => registerModel.Password)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="confirmPassword">Confirm password</label>
+        <InputText id="confirmPassword" class="form-control" @bind-Value="registerModel.ConfirmPassword" type="password" />
+        <ValidationMessage For="@(() => registerModel.ConfirmPassword)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@code {
+    private RegisterModel registerModel = new();
+    private string statusMessage;
+
+    private async Task HandleRegister()
+    {
+        if (registerModel.Password != registerModel.ConfirmPassword)
+        {
+            statusMessage = "Passwords do not match.";
+            return;
+        }
+
+        var user = new IdentityUser { UserName = registerModel.UserName };
+        var result = await UserManager.CreateAsync(user, registerModel.Password);
+
+        if (result.Succeeded)
+        {
+            statusMessage = $"User {user.UserName} was created successfully!";
+        }
+        else
+        {
+            statusMessage = result.Errors.FirstOrDefault()?.Description ?? "Unknown error.";
+        }
+    }
+
+    public class RegisterModel
+    {
+        [Required]
+        [MinLength(3)]
+        public string UserName { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+        [Required]
+        [DataType(DataType.Password)]
+        [Compare(nameof(Password), ErrorMessage = "Passwords do not match.")]
+        public string ConfirmPassword { get; set; }
+    }
+}
