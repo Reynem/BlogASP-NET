@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Blog.Data;
+using Blog.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Controllers
@@ -28,7 +29,7 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBlog([FromBody] Blog blog, [FromServices] BlogDbContext dbContext)
+        public async Task<IActionResult> CreateBlog([FromBody] BlogModel blog, [FromServices] BlogDbContext dbContext)
         {
             if (blog == null)
             {
@@ -40,7 +41,7 @@ namespace Blog.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBlog(int id, [FromBody] Blog updatedBlog, [FromServices] BlogDbContext dbContext)
+        public async Task<IActionResult> UpdateBlog(int id, [FromBody] BlogModel updatedBlog, [FromServices] BlogDbContext dbContext)
         {
             if (updatedBlog == null || updatedBlog.Id != id)
             {

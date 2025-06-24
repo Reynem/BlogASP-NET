@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Blog.Models;
 
 namespace Blog.Data
 {
@@ -11,12 +12,12 @@ namespace Blog.Data
             Database.EnsureCreated();
 
         }
-        public Microsoft.EntityFrameworkCore.DbSet<Blog> Blogs { get; set; }
+        public Microsoft.EntityFrameworkCore.DbSet<BlogModel> Blogs { get; set; }
         protected override void OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Blog>().ToTable("Blogs");
-            modelBuilder.Entity<Blog>().HasData(
-                new Blog
+            modelBuilder.Entity<BlogModel>().ToTable("Blogs");
+            modelBuilder.Entity<BlogModel>().HasData(
+                new BlogModel
                 {
                     Id = 1,
                     Title = "Первый пост",
@@ -24,7 +25,7 @@ namespace Blog.Data
                     Author = "Иван Иванов",
                     PublishedDate = new DateTime(2024, 6, 1)
                 },
-                new Blog
+                new BlogModel
                 {
                     Id = 2,
                     Title = "Второй пост",

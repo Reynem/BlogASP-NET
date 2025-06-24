@@ -1,4 +1,7 @@
 using Blog.Data;
+using Blog.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddDbContext<UserDbContext>(options =>
+    options.UseSqlite("Data Source=users.db"));
+
+
+builder.Services.AddIdentityCore<IdentityUser>(options =>
+    options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<UserDbContext>();
 
 builder.Services.AddControllers();
 
