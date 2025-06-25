@@ -16,7 +16,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 
 builder.Services.AddDbContext<BlogDbContext>();
 
-builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddControllers();
@@ -32,17 +31,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
-
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapBlazorHub();
-
-app.MapFallbackToPage("/_Host");
 
 app.Run();
