@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Blog.Models;
+using Blog.ViewModels;
 
 namespace Blog.Controllers
 {
@@ -7,34 +10,56 @@ namespace Blog.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+
+        public AuthController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            if (request.Username == "admin" && request.Password == "password")
-            {
-                return Ok(new { Token = "fake-jwt-token" });
-            }
-            return Unauthorized();
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
+
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterRequest request)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            return CreatedAtAction(nameof(Register), new { Id = 1, Username = request.Username });
+            if (!ModelState.IsValid)
+            {
+                return await Task.FromResult<IActionResult>(BadRequest(ModelState));
+            }
+            var user = new User { UserName = model.Email, Email = model.Email };
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return await Task.FromResult<IActionResult>(Ok());
+            }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return await Task.FromResult<IActionResult>(BadRequest(ModelState));
         }
 
-
-
-        public class LoginRequest
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginViewModel model) 
         {
-            public required string Username { get; set; }
-            public required string Password { get; set; }
-        }
+            if (!ModelState.IsValid)
+            {
+                return await Task.FromResult<IActionResult>(BadRequest(ModelState));
+            }
+            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
+            if (result.Succeeded)
+            {
+                return await Task.FromResult<IActionResult>(Ok());
+            }
+            if (result.IsLockedOut)
+            {
+                return await Task.FromResult<IActionResult>(Forbid("User is locked out"));
+            }
+            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            return await Task.FromResult<IActionResult>(BadRequest(ModelState));
 
-        public class RegisterRequest
-        {
-            public required string Username { get; set; }
-            public required string Email { get; set; }
-            public required string Password { get; set; }
         }
     }
 }
