@@ -31,6 +31,11 @@ namespace Blog.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBlog([FromBody] BlogModel blog, [FromServices] BlogDbContext dbContext)
         {
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                return Unauthorized("You must be logged in to create a blog post.");
+            }
+
             if (blog == null)
             {
                 return BadRequest("Blog cannot be null.");
@@ -43,6 +48,11 @@ namespace Blog.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBlog(int id, [FromBody] BlogModel updatedBlog, [FromServices] BlogDbContext dbContext)
         {
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                return Unauthorized("You must be logged in to create a blog post.");
+            }
+
             if (updatedBlog == null || updatedBlog.Id != id)
             {
                 return BadRequest("Blog data is invalid.");
@@ -64,6 +74,11 @@ namespace Blog.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBlog(int id, [FromServices] BlogDbContext dbContext)
         {
+            if (User.Identity == null || !User.Identity.IsAuthenticated)
+            {
+                return Unauthorized("You must be logged in to delete a blog post.");
+            }
+
             var blog = await dbContext.Blogs.FindAsync(id);
             if (blog == null)
             {

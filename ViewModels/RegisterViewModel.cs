@@ -17,6 +17,7 @@ namespace Blog.ViewModels
         [Compare("Password", ErrorMessage = "Passwords do not match")]
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
+
         public required string PasswordConfirm { get; set; }
     }
 }
