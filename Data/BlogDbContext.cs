@@ -13,9 +13,11 @@ namespace Blog.Data
 
         }
         public Microsoft.EntityFrameworkCore.DbSet<BlogModel> Blogs { get; set; }
+        public Microsoft.EntityFrameworkCore.DbSet<CommentModel> Comments { get; set; }
         protected override void OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BlogModel>().ToTable("Blogs");
+            modelBuilder.Entity<CommentModel>().ToTable("Comments");
             modelBuilder.Entity<BlogModel>().HasData(
                 new BlogModel
                 {
@@ -32,6 +34,25 @@ namespace Blog.Data
                     Content = "Это содержимое второго поста.",
                     Author = "Мария Петрова",
                     PublishedDate = new DateTime(2024, 6, 2)
+                }
+            );
+
+            modelBuilder.Entity<CommentModel>().HasData(
+                new CommentModel
+                {
+                    Id = 1,
+                    BlogId = 1,
+                    Content = "Отличный пост!",
+                    Author = "Алексей Смирнов",
+                    CreatedAt = new DateTime(2024, 6, 1, 12, 0, 0)
+                },
+                new CommentModel
+                {
+                    Id = 2,
+                    BlogId = 2,
+                    Content = "Спасибо за информацию!",
+                    Author = "Елена Кузнецова",
+                    CreatedAt = new DateTime(2024, 6, 2, 14, 30, 0)
                 }
             );
            
