@@ -27,7 +27,7 @@ namespace Blog.Controllers
             {
                 return await Task.FromResult<IActionResult>(BadRequest(ModelState));
             }
-            var user = new User { UserName = model.Email, Email = model.Email };
+            var user = new User { UserName = GenerateUserName(), Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
@@ -60,6 +60,40 @@ namespace Blog.Controllers
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return await Task.FromResult<IActionResult>(BadRequest(ModelState));
 
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> ChangeProfile(ProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return await Task.FromResult<IActionResult>(BadRequest(ModelState));
+            }
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return await Task.FromResult<IActionResult>(NotFound("User not found."));
+            }
+            user.UserName = model.UserName ?? user.UserName;
+            user.BirthDate = model.BirthDate ?? user.BirthDate;
+            user.Bio = model.Bio ?? " ";
+            user.ProfilePictureUrl = model.ProfilePictureUrl ?? " ";
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return await Task.FromResult<IActionResult>(Ok());
+            }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return await Task.FromResult<IActionResult>(BadRequest(ModelState));
+        }
+
+        private static string GenerateUserName()
+        {
+            Random random = new Random();
+            return "Anon" + random.Next(1000, 10000);
         }
     }
 }

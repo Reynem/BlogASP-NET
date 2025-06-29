@@ -26,6 +26,7 @@ namespace Blog.Controllers
             {
                 return NotFound("Blog not found.");
             }
+            comment.BlogId = id;
             comment.Author = User.Identity?.Name ?? "Anon";
             comment.CreatedAt = DateTime.UtcNow;
             dbContext.Comments.Add(comment);
