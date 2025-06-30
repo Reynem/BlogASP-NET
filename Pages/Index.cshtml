@@ -1,0 +1,27 @@
+﻿@page "/blog"
+@model Blog.IndexModel
+
+<div class="container">
+    <h1>Мой блог</h1>
+    <div id="blog-posts">
+		@if (Model.Blogs != null && Model.Blogs.Any())
+		{
+			foreach (var blog in Model.Blogs)
+			{
+						<div class="blog-post">
+							<h2>@blog.Title</h2>
+							<p>@blog.Content</p>
+							<p><small>Опубликовано: @blog.PublishedDate.ToString("dd.MM.yyyy")</small></p>
+						</div>
+			}
+		}
+		else
+		{
+				<p>Нет доступных записей в блоге.</p>
+		})
+    </div>
+</div>
+
+@{
+	ViewData["Title"] = "Блог";
+}

@@ -1,5 +1,6 @@
 using Blog.Data;
 using Blog.Models;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -19,6 +20,11 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 builder.Services.AddDbContext<BlogDbContext>();
 
 builder.Services.AddServerSideBlazor();
+builder.Services.AddRazorPages();
+builder.Services.AddHttpClient("Blog", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:5000/");
+});
 
 builder.Services.AddControllers();
 builder.Services.AddControllersWithViews();
@@ -35,6 +41,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.MapRazorPages();
 
 app.UseAuthentication();
 app.UseAuthorization();
