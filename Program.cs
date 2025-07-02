@@ -42,6 +42,8 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseStaticFiles();
+
 app.MapRazorPages();
 
 app.UseAuthentication();
