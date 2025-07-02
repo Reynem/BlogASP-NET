@@ -67,6 +67,12 @@ namespace Blog.Controllers
             existingBlog.Content = updatedBlog.Content;
             existingBlog.Author = User.Identity.Name ?? updatedBlog.Author;
             existingBlog.PublishedDate = updatedBlog.PublishedDate;
+
+            if (updatedBlog.Categories != null)
+            {
+                existingBlog.Categories = updatedBlog.Categories;
+            }
+
             dbContext.Blogs.Update(existingBlog);
             await dbContext.SaveChangesAsync();
             return NoContent();
@@ -90,5 +96,75 @@ namespace Blog.Controllers
             return NoContent();
         }
 
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchBlogs([FromQuery] string query, [FromServices] BlogDbContext dbContext)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return BadRequest("Search query cannot be empty.");
+            }
+            var blogs = await dbContext.Blogs
+                .Where(b => b.Title.Contains(query) || b.Content.Contains(query))
+                .ToListAsync();
+            if (blogs.Count == 0)
+            {
+                return NotFound("No blogs found matching the search criteria.");
+            }
+            return Ok(blogs);
+        }
+
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetPopularBlogs([FromServices] BlogDbContext dbContext)
+        {
+            var blogs = await dbContext.Blogs
+                .OrderByDescending(b => b.BlogScore)
+                .Take(10)
+                .ToListAsync();
+            return Ok(blogs);
+        }
+
+        [HttpGet("recent")]
+        public async Task<IActionResult> GetRecentBlogs([FromServices] BlogDbContext dbContext)
+        {
+            var blogs = await dbContext.Blogs
+                .OrderByDescending(b => b.PublishedDate)
+                .Take(10)
+                .ToListAsync();
+            return Ok(blogs);
+        }
+
+        [HttpGet("by-author/{author}")]
+        public async Task<IActionResult> GetBlogsByAuthor(string author, [FromServices] BlogDbContext dbContext)
+        {
+            if (string.IsNullOrWhiteSpace(author))
+            {
+                return BadRequest("Author name cannot be empty.");
+            }
+            var blogs = await dbContext.Blogs
+                .Where(b => b.Author == author)
+                .ToListAsync();
+            if (blogs.Count == 0)
+            {
+                return NotFound($"No blogs found for author {author}.");
+            }
+            return Ok(blogs);
+        }
+
+        [HttpGet("by-category/{category}")]
+        public async Task<IActionResult> GetBlogsByCategory(string category, [FromServices] BlogDbContext dbContext)
+        {
+            if (string.IsNullOrWhiteSpace(category))
+            {
+                return BadRequest("Category cannot be empty.");
+            }
+            var blogs = await dbContext.Blogs
+                .Where(b => b.Categories != null && b.Categories.Contains(category))
+                .ToListAsync();
+            if (blogs.Count == 0)
+            {
+                return NotFound($"No blogs found in category {category}.");
+            }
+            return Ok(blogs);
+        }
     }
 }
