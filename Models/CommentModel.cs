@@ -7,5 +7,10 @@
         public required string Content { get; set; }
         public string? Author { get; set; }
         public DateTime? CreatedAt { get; set; }
+
+        public string GetFormattedDate()
+        {
+            return CreatedAt?.ToString("dd.MMMM.yyyy") ?? "Unknown date";
+        }
     }
 }

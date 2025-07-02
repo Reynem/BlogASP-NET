@@ -1,0 +1,38 @@
+﻿@page "/blog/{id}"
+@model Blog.Pages.ThisBlogModel
+
+<div class="container">
+	<h1>Мой блог</h1>
+	<div id="blog-posts">
+		@if (Model.Blog != null)
+		{
+			<div class="blog-post">
+				<h2>@Model.Blog.Title</h2>
+				<p>@Model.Blog.Content</p>
+				<p><small>@Model.Blog.Author</small></p>
+				<p><small>Опубликовано: @Model.Blog.PublishedDate.ToString("dd.MM.yyyy")</small></p>
+			</div>
+
+			<div class="comments-post">
+				<h3>Комментарии:</h3>
+				@foreach (var comment in @Model.Comments.OrderByDescending(c => c.CreatedAt))
+				{
+					<div class="comment">
+						<p><strong>@comment.Author</strong> <small>@comment.GetFormattedDate()</small></p>
+						<p>@comment.Content</p>
+					</div>
+				}
+			</div>
+		}
+		else
+		{
+			<p>Нет доступных записей в блоге.</p>
+		}
+	</div>
+</div>
+
+@{
+	ViewData["Title"] = "Мой блог";
+}
+
+
