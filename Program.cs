@@ -1,5 +1,6 @@
 using Blog.Data;
 using Blog.Models;
+using Blog.Tests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

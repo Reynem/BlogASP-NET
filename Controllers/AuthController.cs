@@ -62,7 +62,7 @@ namespace Blog.Controllers
 
         }
 
-        [HttpPut]
+        [HttpPut("profile")]
         public async Task<IActionResult> ChangeProfile(ProfileViewModel model)
         {
             if (!ModelState.IsValid)
@@ -89,6 +89,14 @@ namespace Blog.Controllers
             }
             return await Task.FromResult<IActionResult>(BadRequest(ModelState));
         }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return await Task.FromResult<IActionResult>(Ok());
+        }
+
 
         private static string GenerateUserName()
         {

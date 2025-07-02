@@ -40,6 +40,7 @@ namespace Blog.Controllers
             {
                 return BadRequest("Blog cannot be null.");
             }
+            blog.Author = User.Identity.Name ?? "Anonymous";
             dbContext.Blogs.Add(blog);
             await dbContext.SaveChangesAsync();
             return CreatedAtAction(nameof(GetBlogById), new { id = blog.Id }, blog);
@@ -64,7 +65,7 @@ namespace Blog.Controllers
             }
             existingBlog.Title = updatedBlog.Title;
             existingBlog.Content = updatedBlog.Content;
-            existingBlog.Author = updatedBlog.Author;
+            existingBlog.Author = User.Identity.Name ?? updatedBlog.Author;
             existingBlog.PublishedDate = updatedBlog.PublishedDate;
             dbContext.Blogs.Update(existingBlog);
             await dbContext.SaveChangesAsync();

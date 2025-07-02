@@ -14,5 +14,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.6" />
+    <PackageReference Include="xunit.assert" Version="2.9.3" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
   </ItemGroup>
 </Project>
